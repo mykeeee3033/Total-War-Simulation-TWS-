@@ -17,27 +17,27 @@ if (isNil "radar_1_monitor") then {
 
         while {alive radar_1} do {
             // Debug: confirm script is running
-            systemChat "Radar script running...";
+            //systemChat "Radar script running...";
 
             // Find nearby BLUFOR planes only
-            private _nearPlanes = (getPosASL radar_1) nearEntities ["Plane", 10000];
+            private _nearPlanes = (getPosASL radar_1) nearEntities ["Plane", 5000];
             private _enemyPlanes = _nearPlanes select {side _x == west};
 
-            // For player testing: also check if player is in a plane and within 10km
+            // For player testing: also check if player is in a plane and within 5km
             private _playerDist = radar_1 distance player;
             private _playerIsPlane = vehicle player isKindOf "Plane";
             private _pool = [radar_1] call radar_fnc_poolDetection;
             private _poolCount = count _pool;
             //private _poolClasses = _pool apply {typeOf _x}; - tells you what kind of planes are available
-            systemChat format ["Player distance to radar: %1, Player in plane: %2, Available aircraft: %3 (%4)", _playerDist, _playerIsPlane, _poolCount];
+            //systemChat format ["Player distance to radar: %1, Player in plane: %2, Available aircraft: %3 (%4)", _playerDist, _playerIsPlane, _poolCount]; //Debug messages activation
 
-            if ((count _enemyPlanes > 0) || {_playerDist <= 10000 && side player == west && _playerIsPlane}) then {
+            if ((count _enemyPlanes > 0) || {_playerDist <= 5000 && side player == west && _playerIsPlane}) then {
                 systemChat "BLUFOR plane detected near radar!";
 
                 // Only assign pilots to planes that haven't been assigned yet
                 private _unassignedPlanes = _pool select {!( _x in radar_1_assignedPlanes )};
                 private _alreadyAssigned = count radar_1_assignedPlanes;
-                private _bluforCount = (count _enemyPlanes) + (if (_playerDist <= 10000 && side player == west && _playerIsPlane) then {1} else {0});
+                private _bluforCount = (count _enemyPlanes) + (if (_playerDist <= 5000 && side player == west && _playerIsPlane) then {1} else {0});
                 private _desiredOpfor = _bluforCount * radar_1_opforCoefficient;
                 private _numToAssign = (_desiredOpfor - _alreadyAssigned) min (count _unassignedPlanes);
 
@@ -60,7 +60,7 @@ if (isNil "radar_1_monitor") then {
                         if (count _enemyPlanes > 0) then {
                             _target = _enemyPlanes select 0;
                         } else {
-                            if (_playerDist <= 10000 && side player == west && _playerIsPlane) then {
+                            if (_playerDist <= 5000 && side player == west && _playerIsPlane) then {
                                 _target = vehicle player;
                             };
                         };

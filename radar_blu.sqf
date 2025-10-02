@@ -17,7 +17,7 @@ if (isNil "radar_2_monitor") then {
 
         while {alive radar_2} do {
             // Debug: confirm script is running
-            systemChat "Radar script running...";
+            //systemChat "Radar script running...";
 
             // Find nearby OPFOR planes only
             private _nearPlanes = (getPosASL radar_2) nearEntities ["Plane", 10000];
@@ -29,7 +29,7 @@ if (isNil "radar_2_monitor") then {
             private _pool = [radar_2] call radar_fnc_poolDetection;
             private _poolCount = count _pool;
             //private _poolClasses = _pool apply {typeOf _x}; - tells you what kind of planes are available
-            systemChat format ["Player distance to radar: %1, Player in plane: %2, Available aircraft: %3 (%4)", _playerDist, _playerIsPlane, _poolCount];
+            //systemChat format ["Player distance to radar: %1, Player in plane: %2, Available aircraft: %3 (%4)", _playerDist, _playerIsPlane, _poolCount]; // debug messages activation
 
             if ((count _enemyPlanes > 0) || {_playerDist <= 10000 && side player == east && _playerIsPlane}) then {
                 systemChat "OPFOR plane detected near radar!";

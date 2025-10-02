@@ -16,6 +16,9 @@ if (isNil "woundedPositions") then { woundedPositions = []; };
 if (isNil "contactMarkerName") then { contactMarkerName = ""; };
 if (isNil "contactMarkerPlaced") then { contactMarkerPlaced = false; };
 if (isNil "latestCasualtyPos") then { latestCasualtyPos = [0,0,0]; };
+// Timer for debug messages (5 minutes = 300 seconds)
+if (isNil "lastDebugTime") then { lastDebugTime = 0; };
+if (isNil "debugInterval") then { debugInterval = 300; }; // 5 minutes in seconds
 
 // Helper function to get faction name
 getFactionName = {
@@ -58,13 +61,17 @@ addMissionEventHandler ["EntityKilled", {
             contactMarkerPlaced = false;
         }] call CBA_fnc_waitAndExecute;
     };
-    // Debug message with location
-    systemChat format [
-        "[DEBUG] Troops in contact! %1 killed at %2 | Total killed: %3",
-        _faction,
-        _pos,
-        _killedCount
-    ];
+    // Debug message with location - only every 5 minutes
+    private _currentTime = diag_tickTime;
+    if (_currentTime - lastDebugTime >= debugInterval) then {
+        systemChat format [
+            "[DEBUG] Troops in contact! %1 killed at %2 | Total killed: %3",
+            _faction,
+            _pos,
+            _killedCount
+        ];
+        lastDebugTime = _currentTime;
+    };
 }];
 
 // Event handler for wounded units
@@ -92,12 +99,16 @@ addMissionEventHandler ["EntityKilled", {
                     contactMarkerPlaced = false;
                 }] call CBA_fnc_waitAndExecute;
             };
-            // Debug message with location
-            systemChat format [
-                "[DEBUG] Troops in contact! %1 wounded at %2",
-                _faction,
-                _pos
-            ];
+            // Debug message with location - only every 5 minutes
+            private _currentTime = diag_tickTime;
+            if (_currentTime - lastDebugTime >= debugInterval) then {
+                systemChat format [
+                    "[DEBUG] Troops in contact! %1 wounded at %2",
+                    _faction,
+                    _pos
+                ];
+                lastDebugTime = _currentTime;
+            };
         };
         _damage
     }];
