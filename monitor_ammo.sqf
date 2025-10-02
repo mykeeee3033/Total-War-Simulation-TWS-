@@ -9,7 +9,7 @@
             private _found = (_hq getPos [0,0]) nearEntities [_x, 200];
             _ammoTrucks append _found;
         } forEach _truckTypes;
-        systemChat format ["[LOGISTICS] Detected ammo trucks: %1", count _ammoTrucks];
+        //systemChat format ["[LOGISTICS] Detected ammo trucks: %1", count _ammoTrucks];
         // Only dispatch if ALL trucks are empty (no driver currently assigned) and cooldown expired
         private _activeTrucks = _ammoTrucks select {count crew _x > 0};
         private _now = time;
@@ -38,13 +38,13 @@
             if (!isNull _priorityGrp && _priorityAmmo < 3) then {
                 systemChat format ["[LOGISTICS] Priority squad: %1 | Size: %2 | Avg Ammo: %3", groupId _priorityGrp, _prioritySize, _priorityAmmo];
                 private _emptyTrucks = _ammoTrucks select {count crew _x == 0};
-                systemChat format ["[LOGISTICS] Empty trucks: %1", count _emptyTrucks];
+                //systemChat format ["[LOGISTICS] Empty trucks: %1", count _emptyTrucks];
                 if (count _emptyTrucks > 0) then {
                     private _veh = _emptyTrucks select 0;
                     private _crewGrp = createGroup west;
                     private _driver = _crewGrp createUnit ["B_Soldier_F", getPos _veh, [], 0, "NONE"];
                     _driver moveInDriver _veh;
-                    systemChat format ["[LOGISTICS] Driver spawned in %1, heading to %2", typeOf _veh, groupId _priorityGrp];
+                    //systemChat format ["[LOGISTICS] Driver spawned in %1, heading to %2", typeOf _veh, groupId _priorityGrp];
                     // Move to squad
                     private _destPos = getPos leader _priorityGrp;
                     private _wp1 = _crewGrp addWaypoint [_destPos, 0];
@@ -75,11 +75,11 @@
             };
         } else {
             if (_now - _lastDispatch <= 300) then {
-                systemChat format ["[LOGISTICS] Cooldown active: %1 seconds left", 300 - (_now - _lastDispatch)];
+                //systemChat format ["[LOGISTICS] Cooldown active: %1 seconds left", 300 - (_now - _lastDispatch)];
             } else {
-                systemChat format ["[LOGISTICS] Truck(s) already dispatched: %1", count _activeTrucks];
+                //systemChat format ["[LOGISTICS] Truck(s) already dispatched: %1", count _activeTrucks];
             };
         };
-        sleep 5;
+        sleep 30;
     };
 };
