@@ -1,3 +1,5 @@
+// Initialize Total War Simulation - ALiVE Integration System
+[] execVM "functions\TWS_init.sqf";
 
 addMissionEventHandler ["EntityCreated", {
   params ["_entity"];
@@ -9,4 +11,4 @@ addMissionEventHandler ["EntityCreated", {
   };
 }];
 
-[[1,1,2,0,0,0,false],"RCO\RCOPersist\RCOcrateFiller.sqf"] remoteExec["execVM",0]; 
+[[1,1,2,0,0,0,false],"RCO\RCOPersist\RCOcrateFiller.sqf"] remoteExec["execVM",0];
