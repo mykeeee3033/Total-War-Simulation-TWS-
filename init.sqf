@@ -4,3 +4,4 @@
 //[] execVM "communications_blu.sqf";
 //[] execVM "artillery_phase.sqf";
 [] execVM "monitor_ammo.sqf";
+[] execVM "npc_analyzer.sqf";
