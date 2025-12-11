@@ -182,7 +182,7 @@ npcAnalyzer_displayAnalysis = {
         private _inCombat = {if (_x select 0 == "in_combat") exitWith {_x select 1}} forEach _factionStats;
         
         systemChat format ["%1: Total=%2 | Alive=%3 | Dead=%4", _faction, _total, _alive, _dead];
-        systemChat format ["  Avg Health=%.2f | Avg Ammo=%2 | In Combat=%3", _avgHealth, _avgAmmo, _inCombat];
+        systemChat format ["  Avg Health=%.2f | Avg Ammo=%1 | In Combat=%2", _avgHealth, _avgAmmo, _inCombat];
     } forEach _statistics;
     
     systemChat "===========================";
@@ -197,8 +197,8 @@ npcAnalyzer_writeToDiary = {
     private _statistics = {if (_x select 0 == "statistics") exitWith {_x select 1}} forEach _data;
     
     private _diaryText = "<font size='16'><b>NPC ANALYSIS REPORT</b></font><br/>";
-    _diaryText = _diaryText + format["<font size='12'>Timestamp: %1</font><br/>", _timestamp];
-    _diaryText = _diaryText + format["<font size='12'>Total Units: %1</font><br/><br/>", _totalUnits];
+    _diaryText = _diaryText + format ["<font size='12'>Timestamp: %1</font><br/>", _timestamp];
+    _diaryText = _diaryText + format ["<font size='12'>Total Units: %1</font><br/><br/>", _totalUnits];
     
     {
         private _factionStats = _x;
@@ -210,9 +210,9 @@ npcAnalyzer_writeToDiary = {
         private _avgAmmo = {if (_x select 0 == "avg_ammo") exitWith {_x select 1}} forEach _factionStats;
         private _inCombat = {if (_x select 0 == "in_combat") exitWith {_x select 1}} forEach _factionStats;
         
-        _diaryText = _diaryText + format["<font size='14' color='#00FF00'><b>%1</b></font><br/>", _faction];
-        _diaryText = _diaryText + format["Total: %1 | Alive: %2 | Dead: %3<br/>", _total, _alive, _dead];
-        _diaryText = _diaryText + format["Avg Health: %.2f | Avg Ammo: %2 | In Combat: %3<br/><br/>", _avgHealth, _avgAmmo, _inCombat];
+        _diaryText = _diaryText + format ["<font size='14' color='#00FF00'><b>%1</b></font><br/>", _faction];
+        _diaryText = _diaryText + format ["Total: %1 | Alive: %2 | Dead: %3<br/>", _total, _alive, _dead];
+        _diaryText = _diaryText + format ["Avg Health: %.2f | Avg Ammo: %1 | In Combat: %2<br/><br/>", _avgHealth, _avgAmmo, _inCombat];
     } forEach _statistics;
     
     player createDiaryRecord ["Diary", ["NPC Analysis", _diaryText]];

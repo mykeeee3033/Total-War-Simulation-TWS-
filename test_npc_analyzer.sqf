@@ -30,7 +30,9 @@ systemChat "Faction data:";
         private _unitName = {if (_x select 0 == "name") exitWith {_x select 1}} forEach _firstUnit;
         private _unitPos = {if (_x select 0 == "position") exitWith {_x select 1}} forEach _firstUnit;
         private _unitHealth = {if (_x select 0 == "health") exitWith {_x select 1}} forEach _firstUnit;
-        systemChat format ["    Example: %1 at %2, Health: %.2f", _unitName, _unitPos, _unitHealth];
+        if (!isNil "_unitName" && !isNil "_unitPos" && !isNil "_unitHealth") then {
+            systemChat format ["    Example: %1 at %2, Health: %.2f", _unitName, _unitPos, _unitHealth];
+        };
     };
 } forEach _factions;
 
