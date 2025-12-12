@@ -98,6 +98,10 @@ if (isServer) then {
     sleep 1;
     systemChat "[TWS] ✓ Enhanced Monitoring loaded";
     
+    [] execVM "functions\core\statusDashboard.sqf";
+    sleep 1;
+    systemChat "[TWS] ✓ Status Dashboard loaded";
+    
     // Wait a moment for all systems to stabilize
     sleep 3;
     
