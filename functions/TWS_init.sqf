@@ -35,11 +35,23 @@ if (isServer) then {
     sleep 1; // Allow extended resources to initialize
     systemChat "[TWS] ✓ Extended Resources loaded";
     
+    [] execVM "functions\core\sectorManagement.sqf";
+    sleep 1; // Allow sector system to initialize
+    systemChat "[TWS] ✓ Sector Management loaded";
+    
+    [] execVM "functions\core\communicationGrid.sqf";
+    sleep 1; // Allow communication system to initialize
+    systemChat "[TWS] ✓ Communication Grid loaded";
+    
     // Phase 2: Logistics System
     diag_log "[TWS] Phase 2: Loading Logistics System";
     [] execVM "functions\logistics\customLogistics.sqf";
     waitUntil {!isNil "TWS_logisticsConfig"};
     systemChat "[TWS] ✓ Custom Logistics loaded";
+    
+    [] execVM "functions\logistics\productionQueue.sqf";
+    sleep 1; // Allow production queue to initialize
+    systemChat "[TWS] ✓ Production Queue loaded";
     
     // Phase 3: ALiVE Integration
     diag_log "[TWS] Phase 3: Loading ALiVE Integration";
@@ -62,6 +74,10 @@ if (isServer) then {
     [] execVM "functions\commander\moraleAndTraining.sqf";
     sleep 1; // Allow morale system to initialize
     systemChat "[TWS] ✓ Morale and Training loaded";
+    
+    [] execVM "functions\commander\advancedReinforcements.sqf";
+    sleep 1; // Allow reinforcement system to initialize
+    systemChat "[TWS] ✓ Advanced Reinforcements loaded";
     
     // Phase 6: Strategic Reporting
     diag_log "[TWS] Phase 6: Loading Strategic Reporting";
@@ -110,11 +126,12 @@ if (isServer) then {
     systemChat "[TWS] TOTAL WAR SIMULATION INITIALIZED";
     systemChat "========================================";
     systemChat "[TWS] All systems operational";
+    systemChat "[TWS] Sector management active";
+    systemChat "[TWS] Production queue & convoys active";
+    systemChat "[TWS] Advanced reinforcements active";
+    systemChat "[TWS] Communication grid active";
     systemChat "[TWS] Enhanced monitoring every 2 minutes";
     systemChat "[TWS] Strategic reports every 30 minutes";
-    systemChat "[TWS] Production/consumption active";
-    systemChat "[TWS] Commander AI active";
-    systemChat "[TWS] Extended resources active";
     systemChat "========================================";
     
     diag_log "[TWS] ========== TWS Initialization Complete ==========";
@@ -122,11 +139,16 @@ if (isServer) then {
     diag_log "[TWS]   - Configuration: Active";
     diag_log "[TWS]   - Intervals: Configurable";
     diag_log "[TWS]   - World State: Active";
+    diag_log "[TWS]   - Sector Management: Active (ALiVE integration + fallback)";
+    diag_log "[TWS]   - Communication Grid: Active (antenna coverage tracking)";
     diag_log "[TWS]   - Extended Resources: Active (manpower, munitions, fabrications, rnd, electricity, construction)";
     diag_log "[TWS]   - Logistics: Active";
+    diag_log "[TWS]   - Production Queue: Active (vehicle spawning & convoys)";
     diag_log "[TWS]   - ALiVE Integration: Active";
     diag_log "[TWS]   - Radar Defense: Active";
     diag_log "[TWS]   - Commander AI: Active";
+    diag_log "[TWS]   - Advanced Reinforcements: Active (troops in contact response)";
+    diag_log "[TWS]   - Morale & Training: Active";
     diag_log "[TWS]   - Strategic Reporting: Active";
     diag_log "[TWS]   - Enhanced Monitoring: Active (2-min updates)";
     diag_log "[TWS]   - Geopolitics: Standby (use TWS_fnc_toggleGeopolitics)";
