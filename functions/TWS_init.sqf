@@ -59,6 +59,10 @@ if (isServer) then {
     waitUntil {!isNil "TWS_commanders"};
     systemChat "[TWS] ✓ Commander Personality loaded";
     
+    [] execVM "functions\commander\moraleAndTraining.sqf";
+    sleep 1; // Allow morale system to initialize
+    systemChat "[TWS] ✓ Morale and Training loaded";
+    
     // Phase 6: Strategic Reporting
     diag_log "[TWS] Phase 6: Loading Strategic Reporting";
     [] execVM "functions\reports\chatGPTIntegration.sqf";
