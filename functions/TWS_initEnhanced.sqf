@@ -115,6 +115,31 @@ if (isServer) then {
     systemChat "[TWS] ✓ Enhanced Communication Grid loaded";
     
     // ===============================================================
+    // PHASE 7: ENHANCED RADAR AND AIR DEFENSE
+    // ===============================================================
+    diag_log "[TWS] Enhanced Phase 7: Radar & Air Defense";
+    
+    [] execVM "functions\radarAir\enhancedRadarSystem.sqf";
+    waitUntil {sleep 0.5; !isNil "TWS_radarSystem"};
+    systemChat "[TWS] ✓ Enhanced Radar System loaded";
+    
+    // Register existing radar objects
+    sleep 1;
+    if (!isNil "TWS_fnc_registerRadarSite") then {
+        // Register OPFOR radar if it exists
+        if (!isNil "radar_1") then {
+            [radar_1, "OPFOR", 5000] call TWS_fnc_registerRadarSite;
+            systemChat "[TWS] ✓ Registered radar_1 (OPFOR)";
+        };
+        
+        // Register BLUFOR radar if it exists
+        if (!isNil "radar_2") then {
+            [radar_2, "BLUFOR", 5000] call TWS_fnc_registerRadarSite;
+            systemChat "[TWS] ✓ Registered radar_2 (BLUFOR)";
+        };
+    };
+    
+    // ===============================================================
     // FINALIZATION
     // ===============================================================
     sleep 2;
@@ -143,6 +168,9 @@ if (isServer) then {
     systemChat "[TWS]   - Manpower-based deployment";
     systemChat "[TWS] Communication Grid: Active";
     systemChat "[TWS]   - Performance degradation on damage";
+    systemChat "[TWS] Enhanced Radar System: Active";
+    systemChat "[TWS]   - Airspace monitoring and scramble orders";
+    systemChat "[TWS]   - Sortie management and tracking";
     systemChat "========================================";
     
     diag_log "[TWS] ========== Enhanced TWS Initialization Complete ==========";
@@ -155,6 +183,7 @@ if (isServer) then {
     diag_log "[TWS] Production system active with loss tracking";
     diag_log "[TWS] Reinforcement system active with FOB support";
     diag_log "[TWS] Communication grid active with degradation";
+    diag_log "[TWS] Enhanced radar system active with sortie management";
     diag_log "[TWS] ==========================================================";
     
     // Set global flag
