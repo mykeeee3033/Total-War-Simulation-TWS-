@@ -11,6 +11,16 @@ if (isServer) then {
     systemChat "[TWS] Initializing Total War Simulation system...";
     diag_log "[TWS] ========== TWS Initialization Start ==========";
     
+    // Phase 0: Configuration and Intervals
+    diag_log "[TWS] Phase 0: Loading Configuration";
+    [] execVM "functions\TWS_intervals.sqf";
+    waitUntil {!isNil "TWS_intervals"};
+    systemChat "[TWS] ✓ Intervals loaded";
+    
+    [] execVM "functions\TWS_config.sqf";
+    sleep 1; // Allow config to load
+    systemChat "[TWS] ✓ Configuration loaded";
+    
     // Phase 1: Core Systems
     diag_log "[TWS] Phase 1: Loading Core Systems";
     [] execVM "functions\core\worldState_custom.sqf";
@@ -20,6 +30,10 @@ if (isServer) then {
     [] execVM "functions\core\objectRoles.sqf";
     waitUntil {!isNil "TWS_objectRoles"};
     systemChat "[TWS] ✓ Object Roles loaded";
+    
+    [] execVM "functions\core\extendedResources.sqf";
+    sleep 1; // Allow extended resources to initialize
+    systemChat "[TWS] ✓ Extended Resources loaded";
     
     // Phase 2: Logistics System
     diag_log "[TWS] Phase 2: Loading Logistics System";
@@ -58,8 +72,23 @@ if (isServer) then {
     sleep 2;
     systemChat "[TWS] ✓ Optional systems loaded (disabled)";
     
+    // Phase 8: Enhanced Monitoring
+    diag_log "[TWS] Phase 8: Loading Enhanced Monitoring";
+    [] execVM "functions\core\enhancedMonitoring.sqf";
+    sleep 1;
+    systemChat "[TWS] ✓ Enhanced Monitoring loaded";
+    
     // Wait a moment for all systems to stabilize
     sleep 3;
+    
+    // Apply configuration assignments
+    diag_log "[TWS] Applying configuration assignments";
+    if (!isNil "TWS_fnc_applyManualAssignments") then {
+        [] call TWS_fnc_applyManualAssignments;
+    };
+    if (!isNil "TWS_fnc_applyMarkerAssignments") then {
+        [] call TWS_fnc_applyMarkerAssignments;
+    };
     
     // Auto-assign roles to objects (optional - can be customized)
     diag_log "[TWS] Running auto-assignment of object roles";
@@ -77,19 +106,25 @@ if (isServer) then {
     systemChat "[TWS] TOTAL WAR SIMULATION INITIALIZED";
     systemChat "========================================";
     systemChat "[TWS] All systems operational";
+    systemChat "[TWS] Enhanced monitoring every 2 minutes";
     systemChat "[TWS] Strategic reports every 30 minutes";
     systemChat "[TWS] Production/consumption active";
     systemChat "[TWS] Commander AI active";
+    systemChat "[TWS] Extended resources active";
     systemChat "========================================";
     
     diag_log "[TWS] ========== TWS Initialization Complete ==========";
     diag_log "[TWS] System Status:";
+    diag_log "[TWS]   - Configuration: Active";
+    diag_log "[TWS]   - Intervals: Configurable";
     diag_log "[TWS]   - World State: Active";
+    diag_log "[TWS]   - Extended Resources: Active (manpower, munitions, fabrications, rnd, electricity, construction)";
     diag_log "[TWS]   - Logistics: Active";
     diag_log "[TWS]   - ALiVE Integration: Active";
     diag_log "[TWS]   - Radar Defense: Active";
     diag_log "[TWS]   - Commander AI: Active";
     diag_log "[TWS]   - Strategic Reporting: Active";
+    diag_log "[TWS]   - Enhanced Monitoring: Active (2-min updates)";
     diag_log "[TWS]   - Geopolitics: Standby (use TWS_fnc_toggleGeopolitics)";
     diag_log "[TWS]   - Civilian Economy: Standby (use TWS_fnc_toggleCivilianEconomy)";
     diag_log "[TWS] =================================================";
