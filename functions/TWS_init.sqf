@@ -162,4 +162,16 @@ if (isServer) then {
     // Set global flag
     TWS_initialized = true;
     publicVariable "TWS_initialized";
+    
+    // ========================================
+    // PHASE 9: ENHANCED SYSTEMS
+    // ========================================
+    diag_log "[TWS] Phase 9: Loading Enhanced Systems";
+    systemChat "[TWS] Loading Enhanced Systems...";
+    
+    [] execVM "functions\TWS_initEnhanced.sqf";
+    waitUntil {sleep 1; !isNil "TWS_enhancedInitialized"};
+    
+    systemChat "[TWS] ✓ Enhanced Systems loaded";
+    diag_log "[TWS] Enhanced systems initialization complete";
 };
