@@ -172,6 +172,101 @@ RES_fnc_getSectorControl = {
     _result
 };
 
+// Create destruction effects (thick black smoke and fires)
+RES_fnc_createDestructionEffects = {
+    params ["_building", "_buildingType"];
+    
+    private _buildingPos = getPosATL _building;
+    private _effects = [];
+    
+    systemChat format ["[Resources] Creating destruction effects for %1", _buildingType];
+    
+    // Create long-distance visible smoke using invisible helipads with fire
+    for "_i" from 1 to 4 do {
+        // Scatter smoke sources around the building
+        private _smokePos = [
+            (_buildingPos select 0) + (random 20 - 10),
+            (_buildingPos select 1) + (random 20 - 10),
+            (_buildingPos select 2)
+        ];
+        
+        // Create invisible helipad for long-distance fire/smoke
+        private _helipad = "Land_HelipadEmpty_F" createVehicle _smokePos;
+        _helipad setPos _smokePos;
+        _helipad inflame true; // This creates fire visible from aircraft
+        _helipad setDamage 1; // Make it burn
+        
+        _effects pushBack _helipad;
+    };
+    
+    // Create vehicle wrecks for thick black smoke (visible from aircraft)
+    for "_i" from 1 to 3 do {
+        private _firePos = [
+            (_buildingPos select 0) + (random 25 - 12.5),
+            (_buildingPos select 1) + (random 25 - 12.5),
+            (_buildingPos select 2)
+        ];
+        
+        // Create invisible burning vehicle for long-distance smoke
+        private _wreck = "Land_Wreck_Car_F" createVehicle _firePos;
+        _wreck setPos _firePos;
+        _wreck setDamage 1;
+        _wreck inflame true;
+        
+        _effects pushBack _wreck;
+    };
+    
+    // Create additional fire sources for close-up detail
+    for "_i" from 1 to (2 + (random 3)) do {
+        private _firePos = [
+            (_buildingPos select 0) + (random 30 - 15),
+            (_buildingPos select 1) + (random 30 - 15),
+            (_buildingPos select 2)
+        ];
+        
+        // Use fuel barrels for realistic industrial fire
+        private _barrel = "Land_MetalBarrel_F" createVehicle _firePos;
+        _barrel setPos _firePos;
+        _barrel setDamage 1;
+        _barrel inflame true;
+        
+        _effects pushBack _barrel;
+    };
+    
+    // Create smoke columns using larger particle effects
+    for "_i" from 1 to 2 do {
+        private _smokePos = [
+            (_buildingPos select 0) + (random 15 - 7.5),
+            (_buildingPos select 1) + (random 15 - 7.5),
+            (_buildingPos select 2) + 5
+        ];
+        
+        // Create large smoke source visible from distance
+        private _smokeSource = "#particlesource" createVehicle _smokePos;
+        _smokeSource setParticleClass "BigDestructionSmoke";
+        _smokeSource setDropInterval 0.03;
+        _smokeSource setParticleRandom [5, [2, 2, 8], [0, 0, 0], 0, 0.5, [0, 0, 0, 0], 0, 0];
+        
+        _effects pushBack _smokeSource;
+    };
+    
+    // Auto-cleanup after 10 minutes
+    [_effects] spawn {
+        params ["_effectObjects"];
+        sleep 600; // 10 minutes
+        
+        {
+            if (!isNull _x) then {
+                deleteVehicle _x;
+            };
+        } forEach _effectObjects;
+        
+        systemChat "[Resources] Destruction effects cleaned up after 10 minutes";
+    };
+    
+    _effects
+};
+
 // Find resource buildings around RES markers only (1km radius)
 RES_fnc_findResourceBuildings = {
     private _resourceBuildings = createHashMap;
@@ -284,6 +379,9 @@ RES_fnc_productionTick = {
                         // Check if building was just destroyed
                         if (_wasAlive && !_isAlive) then {
                             systemChat format ["[Resources] BUILDING DESTROYED: %1 at %2 (controlled by %3)", _buildingType, _markerName, _sectorControl];
+                            
+                            // Create destruction effects (smoke and fire)
+                            [_building, _buildingType] call RES_fnc_createDestructionEffects;
                             
                             // Penalize the controlling faction
                             private _deductAmount = _pointsPerBuilding * 3;
