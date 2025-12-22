@@ -17,12 +17,12 @@ addMissionEventHandler ["EntityKilled", {
     };
 }];
 
-// Threshold check loop with cap on reinforcements within 5 minutes
+// Threshold check loop with cap on reinforcements within 30 minutes
 [] spawn {
     while {true} do {
         sleep 20; // Check every 20 seconds
 
-        // Reset the reinforcement count every 5 minutes
+        // Reset the reinforcement count every 30 minutes
         if (time - lastResetTime >= 1800) then {
             reinforcementCount = 0;
             lastResetTime = time;

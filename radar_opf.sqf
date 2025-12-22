@@ -1,44 +1,60 @@
 call compile preprocessFileLineNumbers "radar_pool_detection.sqf";
-// Only run once per radar
-if (isNil "radar_1_monitor") then {
-    radar_1_monitor = true;
+// Only run once for EAST side
+if (isNil "radar_east_monitor") then {
+    radar_east_monitor = true;
 
     [] spawn {
         private _cooldown = false;
 
         // Initialize assigned planes variable if not already
-        if (isNil "radar_1_assignedPlanes") then { radar_1_assignedPlanes = []; };
+        if (isNil "radar_east_assignedPlanes") then { radar_east_assignedPlanes = []; };
 
         // Set the OPFOR response coefficient (change this value to adjust force ratio)
-        if (isNil "radar_1_opforCoefficient") then { radar_1_opforCoefficient = 2; };
+        if (isNil "radar_east_opforCoefficient") then { radar_east_opforCoefficient = 2; };
 
-        // Define the base position for OPFOR planes to return to (edit as needed)
-        if (isNil "radar_1_basePos") then { radar_1_basePos = getPosASL radar_1; };
-
-        while {alive radar_1} do {
-            // Debug: confirm script is running
-            //systemChat "Radar script running...";
-
-            // Find nearby BLUFOR planes only
-            private _nearPlanes = (getPosASL radar_1) nearEntities ["Plane", 5000];
-            private _enemyPlanes = _nearPlanes select {side _x == west};
-
-            // For player testing: also check if player is in a plane and within 5km
-            private _playerDist = radar_1 distance player;
-            private _playerIsPlane = vehicle player isKindOf "Plane";
-            private _pool = [radar_1] call radar_fnc_poolDetection;
-            private _poolCount = count _pool;
-            //private _poolClasses = _pool apply {typeOf _x}; - tells you what kind of planes are available
-            //systemChat format ["Player distance to radar: %1, Player in plane: %2, Available aircraft: %3 (%4)", _playerDist, _playerIsPlane, _poolCount]; //Debug messages activation
-
-            if ((count _enemyPlanes > 0) || {_playerDist <= 5000 && side player == west && _playerIsPlane}) then {
-                systemChat "BLUFOR plane detected near radar!";
+        while {true} do {
+            // Get radar-equipped airbases for EAST side
+            private _radarData = ["EAST"] call radar_fnc_poolDetection;
+            _radarData params ["_availableAircraft", "_activeAirbases"];
+            
+            // Skip if no radar-equipped airbases
+            if (count _activeAirbases == 0) then {
+                sleep 10; // Wait longer if no radar airbases
+                continue;
+            };
+            
+            // Check for enemy aircraft near any of our radar-equipped airbases
+            private _enemyPlanes = [];
+            private _playerDetected = false;
+            
+            {
+                _x params ["_airbasePos", "_hasRadar"];
+                
+                if (_hasRadar) then {
+                    // Use 5km detection radius from radar-equipped airbase
+                    private _nearPlanes = _airbasePos nearEntities ["Plane", 5000];
+                    private _enemyNear = _nearPlanes select {side _x == west};
+                    _enemyPlanes append _enemyNear;
+                    
+                    // Check if player is enemy plane nearby
+                    private _playerDist = _airbasePos distance player;
+                    if (_playerDist <= 5000 && side player == west && (vehicle player isKindOf "Plane")) then {
+                        _playerDetected = true;
+                    };
+                };
+            } forEach _activeAirbases;
+            
+            // Remove duplicates
+            _enemyPlanes = _enemyPlanes arrayIntersect _enemyPlanes;
+            
+            if ((count _enemyPlanes > 0) || _playerDetected) then {
+                systemChat "BLUFOR plane detected near OPFOR radar!";
 
                 // Only assign pilots to planes that haven't been assigned yet
-                private _unassignedPlanes = _pool select {!( _x in radar_1_assignedPlanes )};
-                private _alreadyAssigned = count radar_1_assignedPlanes;
-                private _bluforCount = (count _enemyPlanes) + (if (_playerDist <= 5000 && side player == west && _playerIsPlane) then {1} else {0});
-                private _desiredOpfor = _bluforCount * radar_1_opforCoefficient;
+                private _unassignedPlanes = _availableAircraft select {!( _x in radar_east_assignedPlanes )};
+                private _alreadyAssigned = count radar_east_assignedPlanes;
+                private _bluforCount = (count _enemyPlanes) + (if (_playerDetected) then {1} else {0});
+                private _desiredOpfor = _bluforCount * radar_east_opforCoefficient;
                 private _numToAssign = (_desiredOpfor - _alreadyAssigned) min (count _unassignedPlanes);
 
                 if (_numToAssign > 0) then {
@@ -52,7 +68,7 @@ if (isNil "radar_1_monitor") then {
                         _selectedPlane setPosASL [_pos select 0, _pos select 1, 100];
                         _selectedPlane setVelocityModelSpace [0, 200, 0];
                         _selectedPlane engineOn true;
-                        radar_1_assignedPlanes pushBack _selectedPlane;
+                        radar_east_assignedPlanes pushBack _selectedPlane;
                         systemChat format ["OPFOR pilot spawned and placed in %1!", typeOf _selectedPlane];
 
                         // Find the nearest BLUFOR plane to target
@@ -60,7 +76,7 @@ if (isNil "radar_1_monitor") then {
                         if (count _enemyPlanes > 0) then {
                             _target = _enemyPlanes select 0;
                         } else {
-                            if (_playerDist <= 5000 && side player == west && _playerIsPlane) then {
+                            if (_playerDetected) then {
                                 _target = vehicle player;
                             };
                         };
@@ -69,9 +85,12 @@ if (isNil "radar_1_monitor") then {
                             private _wp1 = _pilotGrp addWaypoint [getPosASL _target, 0];
                             _wp1 setWaypointType "DESTROY";
                         };
-                        // Add return to base (get out) waypoint
-                        private _wp2 = _pilotGrp addWaypoint [radar_1_basePos, 0];
-                        _wp2 setWaypointType "GETOUT";
+                        // Add return to nearest airbase waypoint
+                        if (count _activeAirbases > 0) then {
+                            private _nearestBase = (_activeAirbases select 0) select 0;
+                            private _wp2 = _pilotGrp addWaypoint [_nearestBase, 0];
+                            _wp2 setWaypointType "GETOUT";
+                        };
                         // Delete pilot when they get out at base
                         _pilot addEventHandler ["GetOutMan", {
                             params ["_unit", "_role", "_vehicle", "_turret"];
