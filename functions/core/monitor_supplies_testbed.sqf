@@ -13,7 +13,6 @@
  * - Lowest supply marker placement
  * - FOB/Objective supply tracking
  * 
- * Author: GitHub Copilot Assistant
  * Version: 2.0 - Multi-Objective
  */
 

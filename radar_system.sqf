@@ -201,10 +201,10 @@ radar_fnc_opforResponse = {
             private _pool = [_radar] call radar_fnc_poolDetection;
             
             // Debug info for this radar
-            systemChat format ["[DEBUG] %1: Pool=%2, Enemies=%3, Player=%4", _radar, count _pool, count _enemyPlanes, _playerThreat];
+            // systemChat format ["[DEBUG] %1: Pool=%2, Enemies=%3, Player=%4", _radar, count _pool, count _enemyPlanes, _playerThreat];
             
             if ((count _enemyPlanes > 0) || _playerThreat) then {
-                systemChat format ["BLUFOR threat detected near %1!", typeOf _radar];
+                // systemChat format ["BLUFOR threat detected near %1!", typeOf _radar];
                 
                 // Only assign pilots to planes that haven't been assigned yet
                 private _unassignedPlanes = _pool select {!(_x in radar_east_assignedPlanes)};
@@ -213,7 +213,7 @@ radar_fnc_opforResponse = {
                 private _desiredOpfor = _bluforCount * radar_east_opforCoefficient;
                 private _numToAssign = (_desiredOpfor - _alreadyAssigned) min (count _unassignedPlanes);
                 
-                systemChat format ["[DEBUG] Pool=%1, Unassigned=%2, Already=%3, Need=%4", count _pool, count _unassignedPlanes, _alreadyAssigned, _numToAssign];
+                // systemChat format ["[DEBUG] Pool=%1, Unassigned=%2, Already=%3, Need=%4", count _pool, count _unassignedPlanes, _alreadyAssigned, _numToAssign];
                 
                 if (_numToAssign > 0) then {
                     {
@@ -228,7 +228,7 @@ radar_fnc_opforResponse = {
                         _selectedPlane setVelocityModelSpace [0, 200, 0];
                         _selectedPlane engineOn true;
                         radar_east_assignedPlanes pushBack _selectedPlane;
-                        systemChat format ["OPFOR pilot spawned and placed in %1!", typeOf _selectedPlane];
+                        // systemChat format ["OPFOR pilot spawned and placed in %1!", typeOf _selectedPlane];
 
                         // Find the nearest BLUFOR plane to target
                         private _target = objNull;
@@ -268,9 +268,9 @@ radar_fnc_opforResponse = {
                     } forEach (_unassignedPlanes select [0, _numToAssign]);
                 } else {
                     if (count _unassignedPlanes == 0) then {
-                        systemChat "No unassigned aircraft available at this radar position!";
+                        // systemChat "No unassigned aircraft available at this radar position!";
                     } else {
-                        systemChat "Already matched BLUFOR count with assigned aircraft!";
+                        // systemChat "Already matched BLUFOR count with assigned aircraft!";
                     };
                 };
             };
@@ -282,8 +282,8 @@ radar_fnc_opforResponse = {
 
 // Function: Main monitoring loop
 radar_fnc_monitorLoop = {
-    systemChat format ["Starting radar monitoring (interval: %1s)", radar_monitoring_interval];
-    systemChat "Commands: ['status'] execVM 'radar_system.sqf' | ['stop'] execVM 'radar_system.sqf'";
+    // systemChat format ["Starting radar monitoring (interval: %1s)", radar_monitoring_interval];
+    // systemChat "Commands: ['status'] execVM 'radar_system.sqf' | ['stop'] execVM 'radar_system.sqf'";
     
     // Start OPFOR response in background
     [] spawn radar_fnc_opforResponse;
@@ -293,14 +293,14 @@ radar_fnc_monitorLoop = {
         sleep radar_monitoring_interval;
     };
     
-    systemChat "Radar monitoring stopped.";
+    // systemChat "Radar monitoring stopped.";
 };
 
 // Main execution logic
 switch (_mode) do {
     case "start": {
         if (radar_monitoring_active) then {
-            systemChat "Radar monitoring already active!";
+            // systemChat "Radar monitoring already active!";
         } else {
             radar_monitoring_active = true;
             [] spawn radar_fnc_monitorLoop;
@@ -313,10 +313,10 @@ switch (_mode) do {
     
     case "stop": {
         radar_monitoring_active = false;
-        systemChat "Radar monitoring will stop after current cycle.";
+        // systemChat "Radar monitoring will stop after current cycle.";
     };
     
     default {
-        systemChat "Invalid mode. Use: start, status, or stop";
+        // systemChat "Invalid mode. Use: start, status, or stop";
     };
 };

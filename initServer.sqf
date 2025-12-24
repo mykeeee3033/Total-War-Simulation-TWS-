@@ -5,11 +5,17 @@
 [] execVM "basicResources.sqf";
 
 //init self fileExists
-//[] execVM "support_manager.sqf";
-//[] execVM "radar_system.sqf"; //holy shit that took forever to make
-//[] execVM "radar_pool_detection.sqf";
-//[] execVM "radar_blu.sqf";
-//[] execVM "radar_opf.sqf";
+[] execVM "battlefield_intelligenceOPF.sqf";
+[] execVM "s_opfor_resuply_heli_SIMPLE.sqf";
+[] execVM "vehicle_fabrication.sqf";
+[] execVM "support_manager.sqf";
+[] spawn { sleep 60; [] execVM "radar_system.sqf"; }; //holy shit that took forever to make - delayed 1 min
+[] spawn { sleep 45; [] execVM "monitor_supplies_testbed.sqf"; };
+[] execVM "radar_pool_detection.sqf";
+[] execVM "radar_blu.sqf";
+[] execVM "radar_opf.sqf";
+[] execVM "simple_airbase_detection.sqf";
+
 
 addMissionEventHandler ["EntityCreated", {
   params ["_entity"];

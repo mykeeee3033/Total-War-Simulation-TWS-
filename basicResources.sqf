@@ -24,8 +24,8 @@ diag_log "[Resources] Initializing Basic Resource System...";
 // Initialize faction resources: [fuel, supplies, fabrication, manpower, electricity]
 if (isNil "RES_factionResources") then {
     RES_factionResources = createHashMap;
-    RES_factionResources set ["BLUFOR", [0, 0, 0, 0, 0]];
-    RES_factionResources set ["OPFOR", [0, 0, 0, 0, 0]];
+    RES_factionResources set ["BLUFOR", [0, 0, 0, 21, 0]];
+    RES_factionResources set ["OPFOR", [0, 0, 1000, 21, 0]];
     publicVariable "RES_factionResources";
 };
 
@@ -555,10 +555,10 @@ publicVariable "RES_fnc_productionTick";
 publicVariable "RES_fnc_getSectorControl";
 publicVariable "RES_buildingProduction";
 
-// Start production loop (every 1 minute)
+// Start production loop (every 10 minutes)
 [] spawn {
     while {true} do {
-        sleep 60; // 1 minute
+        sleep 600; // 10 minutes
         [] call RES_fnc_productionTick;
     };
 };
@@ -567,7 +567,7 @@ publicVariable "RES_buildingProduction";
 [] call RES_fnc_showResourceStatus;
 
 systemChat "[Resources] Basic Resource System initialized!";
-systemChat "[Resources] RES marker-based production active - 1 minute intervals";
+systemChat "[Resources] RES marker-based production active - 10 minute intervals";
 systemChat "[Resources] Place RES markers near industrial areas for resource generation";
 systemChat "Use [] call RES_fnc_showStatus to view resources";
 systemChat "Resource indices: 0=Fuel, 1=Supplies, 2=Fabrication, 3=Manpower, 4=Electricity";
