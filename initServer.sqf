@@ -16,6 +16,9 @@
 [] execVM "radar_opf.sqf";
 [] execVM "simple_airbase_detection.sqf";
 
+// Delay RCO persist auto detailed load by 2 minutes
+[] spawn { sleep 120; "RCOP\RCOPersist\fn_RCOPcrateFiller.sqf" remoteExec["execVM",0]; };
+
 
 addMissionEventHandler ["EntityCreated", {
   params ["_entity"];
@@ -27,5 +30,6 @@ addMissionEventHandler ["EntityCreated", {
   };
 }];
 
-[[1,1,2,0,0,0,false],"RCO\RCOPersist\RCOcrateFiller.sqf"] remoteExec["execVM",0];
+// Delay RCO persist auto detailed load by 2 minutes
+[] spawn { sleep 120; [[1,1,2,0,0,0,false],"RCO\RCOPersist\RCOcrateFiller.sqf"] remoteExec["execVM",0]; };
 

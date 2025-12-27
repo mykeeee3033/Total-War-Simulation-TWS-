@@ -31,14 +31,14 @@ if (isNil "radar_west_monitor") then {
                 _x params ["_airbasePos", "_hasRadar"];
                 
                 if (_hasRadar) then {
-                    // Use 10km detection radius from radar-equipped airbase (BLUFOR has longer range)
-                    private _nearPlanes = _airbasePos nearEntities ["Plane", 10000];
+                    // Use 3km detection radius from radar-equipped airbase (optimized)
+                    private _nearPlanes = _airbasePos nearEntities ["Plane", 3000];
                     private _enemyNear = _nearPlanes select {side _x == east};
                     _enemyPlanes append _enemyNear;
                     
                     // Check if player is enemy plane nearby
                     private _playerDist = _airbasePos distance player;
-                    if (_playerDist <= 10000 && side player == east && (vehicle player isKindOf "Plane")) then {
+                    if (_playerDist <= 3000 && side player == east && (vehicle player isKindOf "Plane")) then {
                         _playerDetected = true;
                     };
                 };
@@ -103,7 +103,7 @@ if (isNil "radar_west_monitor") then {
                 };
             };
 
-            sleep 2; // Check every 2 seconds for faster response
+            sleep 10; // Check every 10 seconds (optimized for performance)
         };
     };
 };

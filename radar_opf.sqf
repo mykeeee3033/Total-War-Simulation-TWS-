@@ -31,14 +31,14 @@ if (isNil "radar_east_monitor") then {
                 _x params ["_airbasePos", "_hasRadar"];
                 
                 if (_hasRadar) then {
-                    // Use 5km detection radius from radar-equipped airbase
-                    private _nearPlanes = _airbasePos nearEntities ["Plane", 5000];
+                    // Use 3km detection radius from radar-equipped airbase (optimized)
+                    private _nearPlanes = _airbasePos nearEntities ["Plane", 3000];
                     private _enemyNear = _nearPlanes select {side _x == west};
                     _enemyPlanes append _enemyNear;
                     
                     // Check if player is enemy plane nearby
                     private _playerDist = _airbasePos distance player;
-                    if (_playerDist <= 5000 && side player == west && (vehicle player isKindOf "Plane")) then {
+                    if (_playerDist <= 3000 && side player == west && (vehicle player isKindOf "Plane")) then {
                         _playerDetected = true;
                     };
                 };
@@ -103,7 +103,7 @@ if (isNil "radar_east_monitor") then {
                 };
             };
 
-            sleep 2; // Check every 2 seconds for faster response
+            sleep 10; // Check every 10 seconds (optimized for performance)
         };
     };
 };

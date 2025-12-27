@@ -42,7 +42,7 @@ addMissionEventHandler ["EntityKilled", {
         if (_currentManpower >= _requiredManpower) then {
             // Deduct manpower cost
             ["OPFOR", 3, -_requiredManpower] call RES_fnc_modifyResource;
-            systemChat format ["[Support] Deploying %1 reinforcements - %2 manpower consumed (%3 remaining)", 
+            // systemChat format ["[Support] Deploying %1 reinforcements - %2 manpower consumed (%3 remaining)", 
                 _scriptType, _requiredManpower, _currentManpower - _requiredManpower];
             true
         } else {
@@ -54,7 +54,7 @@ addMissionEventHandler ["EntityKilled", {
     };
     
     while {true} do {
-        sleep 20; // Check every 20 seconds
+        sleep 60; // Check every 60 seconds (optimized from 20)
 
         // Reset the reinforcement count every 30 minutes
         if (time - lastResetTime >= 1800) then {
@@ -74,7 +74,7 @@ addMissionEventHandler ["EntityKilled", {
                     reinforcementCount = reinforcementCount + 30; // Increment reinforcement count
                 } else {
                     // Keep kill count to try again later when more manpower is available
-                    systemChat "[Support] Waiting for manpower to deploy heavy reinforcements...";
+                    // systemChat "[Support] Waiting for manpower to deploy heavy reinforcements...";
                 };
             } else {
                 if (opforKillCount >= 20) then {
