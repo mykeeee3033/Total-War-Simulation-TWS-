@@ -1,0 +1,12 @@
+name = "My Test Mod";
+picture = "";
+actionName = "Website";
+action = "";
+description = "Test mod for GUI elements and dialogs";
+logo = "";
+logoOver = "";
+tooltip = "My Test Mod";
+tooltipOwned = "My Test Mod Owned";
+overview = "A test mod for learning Arma 3 GUI/dialog systems";
+author = "Your Name";
+overviewPicture = "";
