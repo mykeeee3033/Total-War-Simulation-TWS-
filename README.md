@@ -1,2 +1,2 @@
-# Total-War-Simulation-TWS-
-A simulation mod for Arma III
+# Total-War-Simulation |TWS|
+A Simulation mod for Arma III that enhances aspects of ALiVE and the base game.
