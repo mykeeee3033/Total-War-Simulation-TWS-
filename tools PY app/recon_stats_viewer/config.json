@@ -1,0 +1,9 @@
+{
+  "inidbi_file": "X:/Steam/steamapps/common/Arma 3/!Workshop/@INIDBI2 - Official extension/db/TWS_BattleIntel.ini",
+  "battle_inidbi_file": "X:/Steam/steamapps/common/Arma 3/!Workshop/@INIDBI2 - Official extension/db/TWS_BattleIntel.ini",
+  "logistics_inidbi_file": "X:/Steam/steamapps/common/Arma 3/!Workshop/@INIDBI2 - Official extension/db/TWS_LogisticsIntel.ini",
+  "commander_inidbi_file": "X:/Steam/steamapps/common/Arma 3/!Workshop/@INIDBI2 - Official extension/db/TWS_CommanderIntel.ini",
+  "clock_inidbi_file": "X:/Steam/steamapps/common/Arma 3/!Workshop/@INIDBI2 - Official extension/db/TWS_GameClock.ini",
+  "refresh_seconds": 1.0,
+  "window_title": "TWS Recon Live Viewer"
+}

@@ -1,0 +1,205 @@
+// Mission configuration - loads dialogs for testing the mod
+
+// Base UI classes for mission dialogs
+class RscText {
+    type = 0;
+    idc = -1;
+    x = 0; y = 0; w = 0.1; h = 0.1;
+    style = 0;
+    font = "RobotoCondensed";
+    sizeEx = 0.04;
+    colorText[] = {1, 1, 1, 1};
+    colorBackground[] = {0, 0, 0, 0};
+    colorBackgroundActive[] = {0, 0, 0, 0};
+    shadow = 0;
+    text = "";
+};
+
+class RscButton: RscText {
+    type = 1;
+    style = 2;
+    colorBackground[] = {0.75, 0.75, 0.75, 0.5};
+    colorBackgroundActive[] = {1, 1, 1, 0.7};
+    colorBackgroundDisabled[] = {0.5, 0.5, 0.5, 0.5};
+    colorFocused[] = {1, 1, 1, 0.7};
+    colorBorder[] = {0, 0, 0, 0.5};
+    colorShadow[] = {0, 0, 0, 0.5};
+    borderSize = 0.002;
+    sizeEx = 0.04;
+    action = "";
+};
+
+class RscListbox: RscText {
+    type = 5;
+    style = 0;
+    colorBackground[] = {0, 0, 0, 0.3};
+    colorSelect[] = {1, 1, 1, 1};
+    colorSelect2[] = {1, 1, 1, 1};
+    colorSelectBackground[] = {0.6, 0.6, 0.6, 1};
+    colorSelectBackground2[] = {0.2, 0.2, 0.2, 1};
+    colorText[] = {1, 1, 1, 1};
+    period = 0;
+    maxHistoryDelay = 1.0;
+    autoScrollSpeed = -1;
+    autoScrollDelay = 5;
+    autoScrollRewind = 0;
+    soundSelect[] = {"", 0.1, 1};
+    rowHeight = 0.03;
+    sizeEx = 0.03;
+};
+
+class RscStructuredText: RscText {
+    type = 13;
+    style = 0;
+    colorBackground[] = {0, 0, 0, 0.6};
+    class Attributes {
+        font = "RobotoCondensed";
+        color = "#ffffff";
+        align = "left";
+        shadow = 1;
+    };
+};
+
+// Include dialog definitions from the @myMod folder
+#include "@myMod\addons\mymod_gui\dialogs\myMapDialog.hpp"
+#include "@myMod\addons\mymod_gui\dialogs\waypointContextMenu.hpp"
+#include "@myMod\addons\mymod_gui\dialogs\stageAssignmentDialog.hpp"
+
+class TWS_AirbaseMonitorDialog
+{
+    idd = 9300;
+    movingEnable = 1;
+    enableSimulation = 1;
+
+    class controlsBackground
+    {
+        class MainBackground
+        {
+            idc = -1;
+            type = 0;
+            style = 0;
+            x = 0.18;
+            y = 0.12;
+            w = 0.64;
+            h = 0.72;
+            colorBackground[] = {0, 0, 0, 0.82};
+        };
+
+        class HeaderBar
+        {
+            idc = -1;
+            type = 0;
+            style = 0;
+            x = 0.18;
+            y = 0.12;
+            w = 0.64;
+            h = 0.05;
+            colorBackground[] = {0.12, 0.2, 0.32, 1};
+        };
+    };
+
+    class controls
+    {
+        class Title
+        {
+            idc = -1;
+            type = 0;
+            style = 2;
+            text = "AIRBASE OWNERSHIP MONITOR";
+            x = 0.18;
+            y = 0.12;
+            w = 0.64;
+            h = 0.05;
+            colorBackground[] = {0, 0, 0, 0};
+            colorText[] = {1, 1, 1, 1};
+            sizeEx = 0.04;
+        };
+
+        class AirbaseList
+        {
+            idc = 9301;
+            type = 5;
+            style = 16;
+            x = 0.19;
+            y = 0.18;
+            w = 0.24;
+            h = 0.56;
+            rowHeight = 0.035;
+            colorBackground[] = {0.08, 0.08, 0.08, 0.85};
+            colorSelectBackground[] = {0.2, 0.35, 0.5, 1};
+            colorText[] = {1, 1, 1, 1};
+            colorSelect[] = {1, 1, 1, 1};
+            sizeEx = 0.03;
+            font = "PuristaMedium";
+        };
+
+        class DetailBox
+        {
+            idc = 9302;
+            type = 13;
+            style = 0;
+            x = 0.45;
+            y = 0.18;
+            w = 0.36;
+            h = 0.56;
+            colorBackground[] = {0, 0, 0, 0.55};
+            text = "Select an airbase to inspect it.";
+            class Attributes {
+                font = "RobotoCondensed";
+                color = "#ffffff";
+                align = "left";
+                shadow = 1;
+            };
+        };
+
+        class RefreshButton
+        {
+            idc = 9303;
+            type = 1;
+            style = 2;
+            text = "REFRESH";
+            x = 0.19;
+            y = 0.76;
+            w = 0.11;
+            h = 0.04;
+            action = "[] call TWS_fnc_airbaseMonitorRefresh;";
+            colorBackground[] = {0, 0.4, 0, 0.8};
+            colorText[] = {1, 1, 1, 1};
+            sizeEx = 0.03;
+        };
+
+        class CloseButton
+        {
+            idc = 9304;
+            type = 1;
+            style = 2;
+            text = "CLOSE";
+            x = 0.32;
+            y = 0.76;
+            w = 0.11;
+            h = 0.04;
+            action = "closeDialog 0;";
+            colorBackground[] = {0.5, 0, 0, 0.8};
+            colorText[] = {1, 1, 1, 1};
+            sizeEx = 0.03;
+        };
+
+        class StatusText
+        {
+            idc = 9305;
+            type = 0;
+            style = 0;
+            x = 0.45;
+            y = 0.76;
+            w = 0.36;
+            h = 0.04;
+            colorBackground[] = {0, 0, 0, 0};
+            colorText[] = {0.8, 0.8, 0.8, 1};
+            text = "Waiting for scan...";
+            sizeEx = 0.025;
+        };
+    };
+};
+
+// Note: mapOverlay.hpp doesn't work in mission description.ext
+// We create the map UI dynamically in code instead

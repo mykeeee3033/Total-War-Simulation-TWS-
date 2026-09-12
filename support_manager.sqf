@@ -17,12 +17,46 @@ addMissionEventHandler ["EntityKilled", {
     };
 }];
 
-// Threshold check loop with cap on reinforcements within 5 minutes
+// Threshold check loop with cap on reinforcements within 30 minutes
 [] spawn {
-    while {true} do {
-        sleep 20; // Check every 20 seconds
+    // Manpower costs for different reinforcement types
+    private _manpowerCosts = createHashMap;
+    _manpowerCosts set ["s1", 20];  // Light reinforcements: 2 trucks + infantry
+    _manpowerCosts set ["s2", 40];  // Medium reinforcements: 2 APCs + infantry  
+    _manpowerCosts set ["s3", 80];  // Heavy reinforcements: trucks, APCs, tanks, helis + infantry
 
-        // Reset the reinforcement count every 5 minutes
+    // Function to check and consume OPFOR manpower
+    private _fnc_checkManpower = {
+        params ["_scriptType"];
+        
+        // Check if resource system is available
+        if (isNil "RES_fnc_getResources" || isNil "RES_fnc_modifyResource") exitWith {
+            systemChat "[Support] Resource system not available - spawning reinforcements anyway";
+            true
+        };
+        
+        private _requiredManpower = _manpowerCosts get _scriptType;
+        private _opforResources = ["OPFOR"] call RES_fnc_getResources;
+        private _currentManpower = _opforResources select 3; // Manpower is index 3
+        
+        if (_currentManpower >= _requiredManpower) then {
+            // Deduct manpower cost
+            ["OPFOR", 3, -_requiredManpower] call RES_fnc_modifyResource;
+            // systemChat format ["[Support] Deploying %1 reinforcements - %2 manpower consumed (%3 remaining)", 
+                _scriptType, _requiredManpower, _currentManpower - _requiredManpower];
+            true
+        } else {
+            systemChat format ["[Support] INSUFFICIENT MANPOWER: %1 required, only %2 available - reinforcements denied!", 
+                _requiredManpower, _currentManpower];
+            hint format ["Reinforcements Denied!\nRequired: %1 manpower\nAvailable: %2 manpower", _requiredManpower, _currentManpower];
+            false
+        };
+    };
+    
+    while {true} do {
+        sleep 60; // Check every 60 seconds (optimized from 20)
+
+        // Reset the reinforcement count every 30 minutes
         if (time - lastResetTime >= 1800) then {
             reinforcementCount = 0;
             lastResetTime = time;
@@ -32,22 +66,40 @@ addMissionEventHandler ["EntityKilled", {
         if (reinforcementCount < 100) then {
             // Check if OPFOR kills are above or equal to thresholds
             if (opforKillCount >= 30) then {
-                [] execVM "s3.sqf"; // Execute s3.sqf for 30 or more kills
-                hint "Executing s3.sqf: 30+ OPFOR kills!"; // Debug message
-                opforKillCount = 0; // Reset kill count after executing
-                reinforcementCount = reinforcementCount + 30; // Increment reinforcement count
+                // Check manpower before spawning heavy reinforcements
+                if (["s3"] call _fnc_checkManpower) then {
+                    [] execVM "s3.sqf"; // Execute s3.sqf for 30 or more kills
+                    hint "Executing s3.sqf: 30+ OPFOR kills - Heavy reinforcements deployed!";
+                    opforKillCount = 0; // Reset kill count after executing
+                    reinforcementCount = reinforcementCount + 30; // Increment reinforcement count
+                } else {
+                    // Keep kill count to try again later when more manpower is available
+                    // systemChat "[Support] Waiting for manpower to deploy heavy reinforcements...";
+                };
             } else {
                 if (opforKillCount >= 20) then {
-                    [] execVM "s2.sqf"; // Execute s2.sqf for 20 or more kills
-                    hint "Executing s2.sqf: 20+ OPFOR kills!"; // Debug message
-                    opforKillCount = 0; // Reset kill count after executing
-                    reinforcementCount = reinforcementCount + 20; // Increment reinforcement count
+                    // Check manpower before spawning medium reinforcements
+                    if (["s2"] call _fnc_checkManpower) then {
+                        [] execVM "s2.sqf"; // Execute s2.sqf for 20 or more kills
+                        hint "Executing s2.sqf: 20+ OPFOR kills - Medium reinforcements deployed!";
+                        opforKillCount = 0; // Reset kill count after executing
+                        reinforcementCount = reinforcementCount + 20; // Increment reinforcement count
+                    } else {
+                        // Keep kill count to try again later when more manpower is available
+                        systemChat "[Support] Waiting for manpower to deploy medium reinforcements...";
+                    };
                 } else {
                     if (opforKillCount >= 5) then {
-                        [] execVM "s1.sqf"; // Execute s1.sqf for 5 or more kills
-                        hint "Executing s1.sqf: 5+ OPFOR kills!"; // Debug message
-                        opforKillCount = 0; // Reset kill count after executing
-                        reinforcementCount = reinforcementCount + 5; // Increment reinforcement count
+                        // Check manpower before spawning light reinforcements
+                        if (["s1"] call _fnc_checkManpower) then {
+                            [] execVM "s1.sqf"; // Execute s1.sqf for 5 or more kills
+                            hint "Executing s1.sqf: 5+ OPFOR kills - Light reinforcements deployed!";
+                            opforKillCount = 0; // Reset kill count after executing
+                            reinforcementCount = reinforcementCount + 5; // Increment reinforcement count
+                        } else {
+                            // Keep kill count to try again later when more manpower is available
+                            systemChat "[Support] Waiting for manpower to deploy light reinforcements...";
+                        };
                     };
                 };
             };

@@ -1,0 +1,60 @@
+DEBUG CONSOLE COMMANDS (MOST USEFUL)
+
+SECTOR INFO
+execVM "getSectorInfo.sqf";
+[] execVM "quickSectorInfo.sqf";
+[] execVM "sectorMonitor.sqf";
+[true] execVM "sectorMonitor.sqf";
+[true, true, 10] execVM "sectorMonitor.sqf";
+[false, false] execVM "sectorMonitor.sqf";
+missionNamespace setVariable ['SECTOR_MONITOR_STOP', true];
+
+SUPPLY / OBJECTIVE STATUS
+[] execVM "functions\core\monitor_supplies_testbed.sqf";
+
+RESOURCE STATUS + TEST COMMANDS
+[] call RES_fnc_showStatus;
+[] call RES_fnc_showResourceStatus;
+["BLUFOR", 0, 100] call RES_fnc_testAdd;
+["OPFOR", 1, 50] call RES_fnc_testSub;
+["BLUFOR", 2, 500] call RES_fnc_testSet;
+[] call RES_fnc_productionTick;
+
+DEATH COUNTERS
+[] call DEATH_fnc_getCount;
+[] call DEATH_fnc_resetCount;
+[] call OPFOR_fnc_getCount;
+[] call OPFOR_fnc_resetCount;
+[] call BLUFOR_fnc_getCount;
+[] call BLUFOR_fnc_resetCount;
+
+DEATH STATS (KILLER TYPE BREAKDOWN)
+[] call OPFOR_STATS_fnc_getDetailedStats;
+[] call OPFOR_STATS_fnc_resetStats;
+[] call BLUFOR_STATS_fnc_getDetailedStats;
+[] call BLUFOR_STATS_fnc_resetStats;
+
+BATTLEFIELD INTEL
+[] call BATTLE_fnc_generateDeathReport;
+[] call BATTLE_fnc_getTacticalRecommendations;
+[] call BATTLE_fnc_resetIntelligence;
+private _threats = BATTLE_opforDeaths get "threatAssessment";
+
+RADAR SYSTEM
+[] execVM "radar_system.sqf";
+["status"] execVM "radar_system.sqf";
+["stop"] execVM "radar_system.sqf";
+
+VEHICLE FABRICATION
+[] execVM "vehicle_fabrication.sqf"
+[] call FAB_fnc_forceProductionCycle;
+[] call FAB_fnc_getStatus;
+
+
+
+MYMOD DEBUG/TEST COMMANDS
+[] execVM "@myMod\addons\mymod_gui\functions.sqf";
+[] call mymod_fnc_testFunction;
+[] call mymod_fnc_openDialog;
+createDialog "MyMapDialog";
+[] call mymod_fnc_addMapKeyHandler;
